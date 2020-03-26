@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./styles.css";
 import List from "./components/task/List";
 import Form from "./components/task/Form";
+import LoadingOverlay from 'react-loading-overlay';
+
 import {
   getList,
   addItem,
@@ -13,6 +15,7 @@ function AppHook() {
   const [editMode, setEditMode] = useState(false);
   const [items, setItems] = useState([]);
   const [form, setForm] = useState({ id: "", title: "", description: "" });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getAll();
@@ -38,9 +41,16 @@ function AppHook() {
 
   // Save data
   const onCreate = () => {
+
+    setIsLoading(true);
+
     addItem(form).then(() => {
       getAll();
+      setIsLoading(false);
+    }).catch(error => {
+      setIsLoading(false);
     });
+
     clearForm();
   };
 
@@ -53,41 +63,59 @@ function AppHook() {
 
   // Save edit data
   const onUpdate = () => {
+    setIsLoading(true);
+
     updateItem(form).then(() => {
       getAll();
+      setIsLoading(false);
+    }).catch(error => {
+      setIsLoading(false);
     });
+
     clearForm();
   };
 
   // Delete data
   const onDelete = val => {
+    setIsLoading(true);
+
     deleteItem(val).then(() => {
       getAll();
+      setIsLoading(false);
+    }).catch(error => {
+      setIsLoading(false);
     });
+
   };
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-6 mx-auto">
-          <br />
-          <h1 className="text-center">Todo List</h1>
-          <Form
-            editMode={editMode}
-            item={form}
-            onCreate={onCreate}
-            onChange={onChange}
-            onUpdate={onUpdate}
-          />
-          <List
-            editMode={editMode}
-            items={items}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
+    <LoadingOverlay
+        active={isLoading}
+        spinner
+        text='Loading your content...'
+        >
+      <div className="container">
+        <div className="row">
+          <div className="col-md-6 mx-auto">
+            <br />
+            <h1 className="text-center">Todo List</h1>
+            <Form
+              editMode={editMode}
+              item={form}
+              onCreate={onCreate}
+              onChange={onChange}
+              onUpdate={onUpdate}
+            />
+            <List
+              editMode={editMode}
+              items={items}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </LoadingOverlay>
   );
 }
 

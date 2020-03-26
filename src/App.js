@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./styles.css";
 import List from "./components/task/List";
 import Form from "./components/task/Form";
+import LoadingOverlay from 'react-loading-overlay';
 import {
   getList,
   addItem,
@@ -19,7 +20,8 @@ class App extends Component {
         description: ""
       },
       items: [],
-      editMode: false
+      editMode: false,
+      isLoading : false
     };
 
     this.onCreate = this.onCreate.bind(this);
@@ -39,6 +41,11 @@ class App extends Component {
         items: [...data]
       });
     });
+  };
+
+  // Get all data
+  setLoading = (bool) => {
+    this.setState({'isLoading' : bool});
   };
 
   // clear all input form
@@ -63,9 +70,18 @@ class App extends Component {
 
   // Save data
   onCreate = () => {
+
+    this.setLoading(true);
+
     addItem(this.state.form).then(() => {
       this.getAll();
+      this.setLoading(false);
+      
+    }).catch(error => {
+      this.setLoading(false);
+      alert(error);
     });
+    
     this.clearForm();
   };
 
@@ -80,9 +96,14 @@ class App extends Component {
 
   // Save edit data
   onUpdate = () => {
-    console.log(this.state.form);
+    this.setLoading(true);
+
     updateItem(this.state.form).then(() => {
       this.getAll();
+      this.setLoading(false);
+    }).catch(error => {
+      this.setLoading(false);
+      alert(error);
     });
 
     this.clearForm();
@@ -90,34 +111,47 @@ class App extends Component {
 
   // Delete data
   onDelete = val => {
+    this.setLoading(true);
+
     deleteItem(val).then(() => {
       this.getAll();
+      this.setLoading(false);
+    }).catch(error => {
+      this.setLoading(false);
+      alert(error);
     });
   };
 
   render() {
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-md-6 mx-auto">
-            <br />
-            <h1 className="text-center">Todo List</h1>
-            <Form
-              editMode={this.state.editMode}
-              item={this.state.form}
-              onCreate={this.onCreate}
-              onChange={this.onChange}
-              onUpdate={this.onUpdate}
-            />
-            <List
-              editMode={this.state.editMode}
-              items={this.state.items}
-              onEdit={this.onEdit}
-              onDelete={this.onDelete}
-            />
+      <LoadingOverlay
+        active={this.state.isLoading}
+        spinner
+        text='Loading your content...'
+        >
+        <div className="container">
+          <div className="row">
+            <div className="col-md-6 mx-auto">
+              <br />
+              <h1 className="text-center">Todo List</h1>
+              <Form
+                editMode={this.state.editMode}
+                item={this.state.form}
+                onCreate={this.onCreate}
+                onChange={this.onChange}
+                onUpdate={this.onUpdate}
+              />
+              <List
+                editMode={this.state.editMode}
+                items={this.state.items}
+                onEdit={this.onEdit}
+                onDelete={this.onDelete}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </LoadingOverlay>
+      
     );
   }
 }

@@ -4,9 +4,10 @@ import App from "./App";
 import AppHook from "./AppHook";
 
 const rootElement = document.getElementById("root");
+
 ReactDOM.render(
   <React.StrictMode>
-    <AppHook />
+        <App />
   </React.StrictMode>,
   rootElement
 );

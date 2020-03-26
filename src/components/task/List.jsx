@@ -4,7 +4,7 @@ function List({ items = {}, editMode, onEdit, onDelete }) {
   return (
     <div className="container">
       {items.length < 1 ? (
-        <p>Data belum ada</p>
+        <p>Data is Empty</p>
       ) : (
         items.map((item, index) => (
           <div className="card mb-2" key={index}>
