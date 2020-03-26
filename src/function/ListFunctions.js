@@ -1,62 +1,61 @@
-import axios from 'axios';
+import axios from "axios";
 
-const URL = 'https://api.ryanadhitama.com';
+const URL = "https://api.ryanadhitama.com";
 
 export const getList = () => {
-    return axios
-        .get(URL + '/task',
-            {
-                headers: { 'Content-Type': 'application/json' }
-            }
-        )
-        .then(res => {
-            return res.data
-        })
-}
+  return axios
+    .get(URL + "/task", {
+      headers: { "Content-Type": "application/json" }
+    })
+    .then(res => {
+      return res.data;
+    });
+};
 
-export const addItem = (title, description) => {
-    return axios
-        .post(URL + '/task',
-            {
-                title: title,
-                description: description
-            },
-            {
-                headers: { 'Content-Type': 'application/json' }
-            }
-        )
-        .then(res => {
-            console.log(res);
-        })
-}
+export const addItem = form => {
+  return axios
+    .post(
+      URL + "/task",
+      {
+        title: form.title,
+        description: form.description
+      },
+      {
+        headers: { "Content-Type": "application/json" }
+      }
+    )
+    .then(res => {
+      console.log(res);
+    });
+};
 
-export const updateItem = (title, description, id) => {
-    return axios
-        .put(URL + `/task/${id}`,
-            {
-                title: title,
-                description: description
-            },
-            {
-                headers: { 'Content-Type': 'application/json' }
-            }
-        )
-        .then(res => {
-            console.log(res);
-        })
-}
+export const updateItem = form => {
+  // console.log(`/task/${form.id}`);
+  return axios
+    .put(
+      URL + `/task/${form.id}`,
+      {
+        title: form.title,
+        description: form.description
+      },
+      {
+        headers: { "Content-Type": "application/json" }
+      }
+    )
+    .then(res => {
+      console.log(res);
+    });
+};
 
 export const deleteItem = id => {
-    return axios
-        .delete(URL + `/task/${id}`,
-            {
-                headers: { 'Content-Type': 'application/json' }
-            }
-        )
-        .then(res => {
-            console.log(res);
-        })
-        .catch(err => {
-            console.log(err);
-        })
-}
+  return axios
+    .delete(URL + `/task/${id}`, {
+      headers: { "Content-Type": "application/json" }
+    })
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};

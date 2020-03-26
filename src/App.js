@@ -1,21 +1,26 @@
-import React, { Component }  from 'react';
-import './App.css';
-import List from './components/task/List';
-import Form from './components/task/Form';
-import { getList, addItem, updateItem, deleteItem } from './function/ListFunctions';
+import React, { Component } from "react";
+import "./styles.css";
+import List from "./components/task/List";
+import Form from "./components/task/Form";
+import {
+  getList,
+  addItem,
+  updateItem,
+  deleteItem
+} from "./function/ListFunctions";
 
 class App extends Component {
-
   constructor() {
     super();
     this.state = {
-        id: '',
-        title: '',
-        description: '',
-        editDisabled: false,
-        items: [],
-        editMode : false
-    }
+      form: {
+        id: "",
+        title: "",
+        description: ""
+      },
+      items: [],
+      editMode: false
+    };
 
     this.onCreate = this.onCreate.bind(this);
     this.onChange = this.onChange.bind(this);
@@ -24,93 +29,97 @@ class App extends Component {
   }
 
   componentDidMount() {
-      this.getAll();
+    this.getAll();
   }
 
+  // Get all data
   getAll = () => {
-      getList().then(data => {
-          this.setState({
-              title: '',
-              items: [...data]
-          })
-      })
-  }
+    getList().then(data => {
+      this.setState({
+        items: [...data]
+      });
+    });
+  };
 
+  // clear all input form
   clearForm = () => {
     this.setState({
-        title: '',
-        description: '',
-        editMode: false
-    })
-  }
+      form: {
+        id: "",
+        title: "",
+        description: ""
+      },
+      editMode: false
+    });
+  };
 
+  // Handle on change input
   onChange = (name, value) => {
-    this.setState({
-        [name]: value
-    })
-  }
+    const { form } = this.state;
+    const newForm = { ...form, [name]: value };
 
+    this.setState({ form: newForm });
+  };
+
+  // Save data
   onCreate = () => {
-      addItem(this.state.title, this.state.description).then(() => {
-          this.getAll()
-      })
-      this.clearForm();
-  }
+    addItem(this.state.form).then(() => {
+      this.getAll();
+    });
+    this.clearForm();
+  };
 
-  onEdit = (itemid) => {
-    var data = [...this.state.items];
+  // Show data into edit form
+  onEdit = index => {
+    var formItem = [...this.state.items][index];
+    this.setState({
+      form: formItem,
+      editMode: true
+    });
+  };
 
-    data.forEach((item, index) => {
-        if (item.id === itemid) {
-            this.setState({
-                id: item.id,
-                title: item.title,
-                description: item.description,
-                editMode: true
-            })
-        }
-    })
-  }
-
+  // Save edit data
   onUpdate = () => {
-      updateItem(this.state.title, this.state.description, this.state.id).then(() => {
-          this.getAll()
-      })
-
-      this.clearForm();
-  }
-
-  onDelete = (val) => {
-      deleteItem(val).then(() => {
-        this.getAll()
+    console.log(this.state.form);
+    updateItem(this.state.form).then(() => {
+      this.getAll();
     });
 
-  }
+    this.clearForm();
+  };
+
+  // Delete data
+  onDelete = val => {
+    deleteItem(val).then(() => {
+      this.getAll();
+    });
+  };
 
   render() {
-    return (      
+    return (
       <div className="container">
         <div className="row">
           <div className="col-md-6 mx-auto">
             <br />
             <h1 className="text-center">Todo List</h1>
-            <Form 
-              item = {this.state} 
-              onCreate = {this.onCreate}
-              onChange = {this.onChange}
-              onUpdate = {this.onUpdate}
+            <Form
+              editMode={this.state.editMode}
+              item={this.state.form}
+              onCreate={this.onCreate}
+              onChange={this.onChange}
+              onUpdate={this.onUpdate}
             />
-            <List 
-              items = {this.state}
-              onEdit= {this.onEdit}
-              onDelete = {this.onDelete}
+            <List
+              editMode={this.state.editMode}
+              items={this.state.items}
+              onEdit={this.onEdit}
+              onDelete={this.onDelete}
             />
           </div>
         </div>
       </div>
-    )
+    );
   }
-
 }
 
 export default App;
