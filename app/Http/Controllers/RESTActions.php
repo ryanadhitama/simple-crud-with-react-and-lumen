@@ -48,7 +48,7 @@ trait RESTActions {
             return $this->respond(Response::HTTP_NOT_FOUND);
         }
         $m::destroy($id);
-        return $this->respond(Response::HTTP_NO_CONTENT);
+        return $this->respond(Response::HTTP_OK);
     }
 
     protected function respond($status, $data = [])
